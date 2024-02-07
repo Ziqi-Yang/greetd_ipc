@@ -1,6 +1,6 @@
 //! greeted-ipc: Zig implmentation for greetd ipc protocl
 //! Relevant Links:
-//! Greet: https://sr.ht/~kennylevinsen/greetd/
+//! Greetd: https://sr.ht/~kennylevinsen/greetd/
 
 const std = @import("std");
 const json = std.json;
