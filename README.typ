@@ -1,6 +1,20 @@
 = Greetd_IPC
   #link("https://sr.ht/~meow_king/greetd_ipc/")[Project page] \
   #link("https://meow_king.srht.site/meow-docs/greetd-ipc/index.html")[API Documentation]
+
+  == Installation
+    For `zig` master branch, run the following command
+    ```bash
+zig fetch 'https://git.sr.ht/~meow_king/greetd_ipc/archive/v0.1.0.tar.gz' --save
+    ```
+    Then you can add this dependency into `build.zig` file:
+    ```zig
+    const dep = b.dependency("greetd_ipc", .{ .target = target, .optimize = optimize });
+    const module = dep.module("greetd_ipc");
+    exe.root_module.addImport("greetd_ipc", module);
+    ```
+    For other version of Zig, you can include `greetd-ipc.zig` file into your
+    source directory. 
   
   == Usage
     ```zig
