@@ -11,19 +11,28 @@ const GREETD_IPC_SOCKET_PATH_ENV_NAME = "GREETD_SOCK";
 
 pub const Request = union(enum) {
     create_session: struct {
+        /// please use the this field's default value
+        type: []const u8 = "create_session",
         username: []const u8
     },
 
     post_auth_message_response: struct {
+        /// please use the this field's default value
+        type: []const u8 = "post_auth_message_response",
         response: ?[]const u8
     },
 
     start_session: struct {
+        /// please use the this field's default value
+        type: []const u8 = "start_session",
         cmd: []const []const u8,
         env: []const []const u8,
     },
     
-    cancel_session: struct {}
+    cancel_session: struct {
+        /// please use the this field's default value
+        type: []const u8 = "cancel_session"
+    }
 };
 
 pub const Response = union(enum) {
@@ -115,31 +124,13 @@ pub const GreetdIPC = struct {
         errdefer self.arena_impl.deinit();
         const allocator = self.arena_impl.allocator();
 
-        const raw_payload = switch (request) {
-            .create_session => |s| raw: {
-                break :raw .{
-                    .type = "create_session",
-                    .username = s.username
-                };
-            },
-            .post_auth_message_response => |s| raw: {
-                break :raw .{
-                    .type = "post_auth_message_response",
-                    .response = s.response
-                };
-            },
-            .start_session => |s| raw: {
-                break :raw .{
-                    .type = "start_session",
-                    .cmd = s.cmd,
-                    .env = s.end,
-                };
-            },
-            .cancel_session => .{}
+        const payload = switch (request) {
+            inline else => | raw_payload | blk: {
+                break :blk try json.stringifyAlloc(
+                    allocator, raw_payload, .{ .whitespace = .minified }
+                );
+            }
         };
-        const payload = try json.stringifyAlloc(
-            allocator, raw_payload, .{ .whitespace = .minified }
-        );
 
         const payload_len: u32 = @intCast(payload.len);
 
@@ -182,7 +173,6 @@ pub const GreetdIPC = struct {
             const auth_message_type = try AuthenticationMsgType.from_str(
                 raw_response.object.get("auth_message_type").?.string
             );
-            std.debug.print("{any}\n", .{raw_response.object.get("auth_message")});
             return Response {
                 .auth_message = .{
                     .auth_message_type = auth_message_type,
