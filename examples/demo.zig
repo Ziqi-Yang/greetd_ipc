@@ -117,12 +117,6 @@ pub fn main() !void {
     var gpa_impl = std.heap.GeneralPurposeAllocator(.{}){};
     defer if (gpa_impl.deinit() == .leak) @panic("MEMORY LEAK");
     const gpa = gpa_impl.allocator();
-    // var arena_impl = std.heap.ArenaAllocator.init(gpa_impl.allocator());
-    // defer arena_impl.deinit();
-    // const arena = arena_impl.allocator();
-
-    const gipc = try GreetdIPC.new(null, gpa);
-    defer gipc.deinit();
 
     for (0..MAX_FAILURES) |_| {
         const res = try login("echo 1", gpa);

@@ -1,6 +1,25 @@
-//! greeted-ipc: Zig implmentation for greetd ipc protocl
-//! Relevant Links:
-//! Greetd: https://sr.ht/~kennylevinsen/greetd/
+//! # greeted-ipc
+//! Zig implementation for [greetd](https://sr.ht/~kennylevinsen/greetd/) ipc protocol
+//! 
+//! Example usage:
+//! 
+//! ```zig
+//! const std = @import("std");
+//!
+//! pub fn main() !void {
+//!     var gpa_impl = std.heap.GeneralPurposeAllocator(.{}){};
+//!     defer if (gpa_impl.deinit() == .leak) @panic("MEMORY LEAK");
+//!     const gpa = gpa_impl.allocator();
+//!
+//!     const gipc: GreetdIPC = try GreetdIPC.new(null, gpa);
+//!     defer gipc.deinit();
+//!     const request: Request = .{ .create_session = .{ .username = "user"}};
+//!     try gipc.sendMsg(request);
+//!     const response = try gipc.readMsg();
+//!     std.debug.print("{s}\n", .{std.json.fmt(response, .{})});
+//! }
+//! ```
+
 
 const std = @import("std");
 const json = std.json;
@@ -9,6 +28,7 @@ const ArenaAllocator = std.heap.ArenaAllocator;
 
 const GREETD_IPC_SOCKET_PATH_ENV_NAME = "GREETD_SOCK";
 
+/// Please use `type` field's default value
 pub const Request = union(enum) {
     create_session: struct {
         /// please use the this field's default value
@@ -83,7 +103,7 @@ pub const ResponseErrorType = enum {
     }
 };
 
-/// Greetd IPC
+/// Communication Channel
 pub const GreetdIPC = struct {
     const Self = @This();
     
@@ -91,7 +111,9 @@ pub const GreetdIPC = struct {
     arena_impl: *ArenaAllocator,
     endian: std.builtin.Endian,
 
-    // create a new GreetdIPC object
+    /// Create a new GreetdIPC object  
+    /// Set `socket_path` to null to automatically get the socket path from environment
+    /// variable `GREETD_SOCK`.
     pub fn new(socket_path: ?[]const u8, allocator: std.mem.Allocator) !Self {
         const spath = if (socket_path) |path| path: {
             break :path path;
