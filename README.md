@@ -1,15 +1,11 @@
 # Greetd_IPC
 
-[Project page](https://sr.ht/~meow_king/greetd_ipc/)\
-[API
-Documentation](https://meow_king.srht.site/meow-docs/greetd-ipc/index.html)
-
 ## Installation
 
 Supported Zig Version: `0.13`.
 
 ``` bash
-zig fetch 'https://codeberg.org/meow_king/greetd_ipc/archive/v0.1.0.tar.gz' --save
+zig fetch 'https://codeberg.org/meow_king/greetd_ipc/archive/v0.1.1.tar.gz' --save
 ```
 
 Then you can add this dependency into `build.zig` file:
