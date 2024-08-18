@@ -11,7 +11,7 @@ pub fn build(b: *std.Build) void {
 
     // Tests
     const greetd_ipc_tests = b.addTest(.{
-        .root_source_file = .{ .path = "src/greetd_ipc.zig"},
+        .root_source_file = b.path("src/greetd_ipc.zig"),
         .target = target,
         .optimize = optimize
     });
@@ -31,7 +31,7 @@ pub fn build(b: *std.Build) void {
 
     // Lib module
     const greetd_ipc_mod = b.addModule("greetd_ipc", .{
-        .root_source_file = .{ .path = "src/greetd_ipc.zig"},
+        .root_source_file = b.path("src/greetd_ipc.zig"),
         .target = target,
         .optimize = optimize
     });
@@ -39,7 +39,7 @@ pub fn build(b: *std.Build) void {
     // Example exe
     const greetd_ipc_example = b.addExecutable(.{
         .name = example_name,
-        .root_source_file = .{ .path = example_path },
+        .root_source_file = b.path(example_path),
         .target = target,
         .optimize = optimize
     });

@@ -137,7 +137,7 @@ pub const GreetdIPC = struct {
         const spath = if (socket_path) |path| path: {
             break :path path;
         } else path: {
-            const path = std.os.getenv(GREETD_IPC_SOCKET_PATH_ENV_NAME);
+            const path = std.posix.getenv(GREETD_IPC_SOCKET_PATH_ENV_NAME);
             if (path == null) {
                 return error.greetd_ipc_socket_path_env_not_found;
             }

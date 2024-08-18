@@ -5,7 +5,6 @@ const Response = greetd_ipc.Response;
 
 const std = @import("std");
 const mem = std.mem;
-const os = std.os;
 
 const stdin = std.io.getStdIn().reader();
 const stderr = std.io.getStdOut().writer();
@@ -32,7 +31,7 @@ fn prompt_stderr_alloc(allocator: mem.Allocator, prompt: []const u8) !?[]const u
 // note: in fakegreet, CMD won't be executed
 fn login(cmd: []const u8, allocator: mem.Allocator) !LoginResult {
     try stderr.print("{s}\n", .{"=========== Login ==========="});
-    var raw_node = std.os.uname().nodename;
+    var raw_node = std.posix.uname().nodename;
     const node = mem.trimRight(u8, &raw_node, "\x00");
     
     var buf: [200]u8 = undefined;
